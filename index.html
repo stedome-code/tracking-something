@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Isabelle vs Stefan – Challenge Timeline</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        background: radial-gradient(circle at top, #1f1f1f, #0e0e0e);
+        color: white;
+        overflow-x: hidden;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        background: rgba(10, 10, 10, 0.75);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        z-index: 100;
+      }
+
+      .header-note {
+        text-align: center;
+        font-size: 10px;
+        opacity: 0.35;
+        padding-top: 3px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 6px;
+        letter-spacing: 0.2px;
+      }
+
+      .scoreboard {
+        max-width: 1200px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        padding: 20px 24px;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+
+      .scoreboard .right {
+        text-align: right;
+      }
+
+      .timeline {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 80px 16px;
+        position: relative;
+      }
+
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          rgba(255, 255, 255, 0.25),
+          transparent
+        );
+        transform: translateX(-50%);
+      }
+
+      .entry {
+        margin-bottom: 110px;
+        position: relative;
+        animation: fadeUp 0.9s ease both;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .entry-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        gap: 32px;
+      }
+
+      .left,
+      .right {
+        padding: 0 24px;
+      }
+      .left {
+        text-align: right;
+      }
+
+      .winner {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .winner.isabelle {
+        color: #4ade80;
+      }
+      .winner.stefan {
+        color: #60a5fa;
+      }
+
+      .title {
+        font-size: 17px;
+        opacity: 0.85;
+      }
+
+      .image {
+        margin-top: 28px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .image img {
+        width: 100%;
+        max-width: 520px;
+        border-radius: 18px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+      }
+
+      .image img:hover {
+        transform: scale(1.02);
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.75);
+      }
+
+      footer {
+        text-align: center;
+        padding: 60px 20px 80px;
+        opacity: 0.45;
+        font-size: 14px;
+      }
+
+      /* MOBILE OPTIMIZATION */
+      @media (max-width: 768px) {
+        .scoreboard {
+          font-size: 18px;
+          padding: 16px 18px;
+        }
+
+        .entry-content {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .left,
+        .right {
+          text-align: left;
+          padding-left: 40px;
+          padding-right: 12px;
+        }
+
+        .winner {
+          font-size: 16px;
+        }
+
+        .title {
+          font-size: 15px;
+        }
+
+        .image img {
+          max-width: 100%;
+          border-radius: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="scoreboard">
+        <div class="winner isabelle" id="score-isabelle">Isabelle: 0</div>
+        <div>A Thing We Are Doing</div>
+        <div id="score-stefan" class="right winner stefan">Stefan: 0</div>
+      </div>
+    </header>
+    <div class="header-note">
+      A challenge is initiated by formally announcing it to the other party,
+      clearly stating the win conditions and receiving their agreement. This can
+      be done for any kind of activity, regardless of how random they are. Good
+      luck small one, the good boy is about to crush you. Try to keep up 🙂
+    </div>
+    <main class="timeline" id="timeline"></main>
+
+    <script>
+      const challenges = [
+        {
+          title: "Challenge 1: Minigolf",
+          winner: "stefan",
+          points: 1,
+          image: "Images/golf.jpg",
+        },
+        {
+          title: "Challenge 2: Billiard",
+          winner: "isabelle",
+          points: 1,
+          image: "Images/billiard.jpeg",
+        },
+      ];
+
+      let scores = { isabelle: 0, stefan: 0 };
+      const timeline = document.getElementById("timeline");
+
+      challenges.forEach((c) => {
+        scores[c.winner] += c.points;
+
+        const entry = document.createElement("div");
+        entry.className = "entry";
+
+        entry.innerHTML = `
+      <div class="entry-content">
+        <div class="left">
+          ${
+            c.winner === "isabelle"
+              ? `
+            <div class="winner isabelle">Isabelle +${c.points}</div>
+            <div class="title">${c.title}</div>
+          `
+              : ""
+          }
+        </div>
+        <div class="right">
+          ${
+            c.winner === "stefan"
+              ? `
+            <div class="winner stefan">Stefan +${c.points}</div>
+            <div class="title">${c.title}</div>
+          `
+              : ""
+          }
+        </div>
+      </div>
+      <div class="image">
+        <img src="${c.image}" alt="challenge image">
+      </div>
+    `;
+
+        timeline.appendChild(entry);
+      });
+
+      document.getElementById(
+        "score-isabelle"
+      ).textContent = `Isabelle: ${scores.isabelle}`;
+      document.getElementById(
+        "score-stefan"
+      ).textContent = `Stefan: ${scores.stefan}`;
+    </script>
+  </body>
+</html>
